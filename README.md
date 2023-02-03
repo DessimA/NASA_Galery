@@ -32,3 +32,7 @@ Criando SPA com React
 3 - Configurar as rotas na aplicação 
 
 4 - Configura rota index(/) 
+
+5 - Configurar rotas filhas
+
+6 - Configurar local para renderizar rotas (outlet)
