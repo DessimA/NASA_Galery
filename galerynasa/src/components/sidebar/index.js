@@ -29,7 +29,7 @@ export default function Sidebar() {
           icon={<BsFillFileImageFill />}
         />
       </div>
-      <SidebarButton title="Sing Out" to="" icon={<FaSignOutAlt />} />
+      <SidebarButton title="Sign Out" to="" icon={<FaSignOutAlt />} />
     </div>
   );
 }

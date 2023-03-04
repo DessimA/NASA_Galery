@@ -1,57 +1,56 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { IconContext } from "react-icons";
-import { AiFillPlayCircle } from "react-icons/ai";
-import ImageDetails from "../components/ImageDetails/ImageDetails";
-import "./library.css";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './library.css';
+import ImageDetails from '../ImageDetails';
+import { getAPOD, getRoverPhotos, NASA_API_KEY } from '../../nasa';
 
 export default function Library() {
-  const [playlists, setPlaylists] = useState(null);
+  const [imageList, setImageList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("https://api.nasa.gov/planetary/apod?count=3&api_key=DEMO_KEY")
-      .then((response) => setPlaylists(response.data))
-      .catch((error) => console.log(error));
+    Promise.all([
+      getAPOD(NASA_API_KEY),
+      getRoverPhotos('curiosity', '2023-02-27'), // exemplo de chamada para rover photos
+     
+    ]).then(([apod, roverPhotos]) => {
+      const images = [apod, ...roverPhotos];
+      setImageList(images);
+    }).catch((error) => console.log(error));
   }, []);
 
-   const showImageDetails = (image) => {
+  const showImageDetails = (image) => {
     setSelectedImage(image);
   };
 
   return (
     <div className="screen-container">
       <div className="library-body">
-        {playlists?.map((playlist) => (
-          <div
+        {imageList.map((image) => (
+          <Link
+            to={{
+              pathname: '/image-details',
+              state: {
+                image: image,
+              },
+            }}
             className="playlist-card"
-            key={playlist.date}
-            onClick={() => showImageDetails(playlist)}
+            key={image.date || image.id}
+            onClick={() => showImageDetails(image)}
           >
             <img
-              src={playlist.url}
+              src={image.url || image.img_src || ''}
               className="playlist-image"
-              alt={playlist.title}
+              alt={image.title || ''}
             />
-            <p className="playlist-title">{playlist.title}</p>
-            <p className="playlist-subtitle">{playlist.date}</p>
-            <div className="library-fade">
-              <IconContext.Provider value={{ size: "50px", color: "#1ed760" }}>
-                <AiFillPlayCircle />
-              </IconContext.Provider>
-            </div>
-          </div>
+            <p className="playlist-title">{image.title || image.rover?.name}</p>
+            <p className="playlist-subtitle">{image.date || image.earth_date}</p>
+            <div className="library-fade"></div>
+          </Link>
         ))}
       </div>
       {selectedImage && (
-        <ImageDetails
-          title={selectedImage.title}
-          date={selectedImage.date}
-          explanation={selectedImage.explanation}
-          url={selectedImage.url}
-          onClose={() => setSelectedImage(null)}
-        />
+        <ImageDetails image={selectedImage} onClose={() => setSelectedImage(null)} />
       )}
     </div>
   );
