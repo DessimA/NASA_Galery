@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./sidebar.css";
 import SidebarButton from "./sidebarButton";
-import { FaPlay, FaSignOutAlt } from "react-icons/fa";
-import { BsSearch, BsFillCalendar2MinusFill } from "react-icons/bs";
+import { FaSignOutAlt } from "react-icons/fa";
+import { BsSearch, BsFillCalendar2MinusFill, BsFillEyeFill } from "react-icons/bs";
 
 export default function Sidebar() {
   const [image] = useState(
@@ -14,7 +14,7 @@ export default function Sidebar() {
     <div className="sidebar-container">
       <img src={image} className="profile-img" alt="profile" />
       <div>
-        <SidebarButton title="Player" to="/ImageView" icon={<FaPlay />} />
+        <SidebarButton title="Visualizar" to="/image-view" icon={<BsFillEyeFill />} />
         <SidebarButton title="Foto do Dia" to="/" icon={<BsFillCalendar2MinusFill />} />
         <SidebarButton
           title="Busca"
