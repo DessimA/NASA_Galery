@@ -26,3 +26,15 @@ export const searchMarsPhotos = async (roverName, earthDate) => {
     return null;
   }
 };
+
+export const searchAPOD = async (date) => {
+  try {
+    const response = await axios.get(
+      `${NASA_API_BASE_URL}/planetary/apod?api_key=${NASA_API_KEY}&date=${date}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error while fetching APOD by date', error);
+    return null;
+  }
+};

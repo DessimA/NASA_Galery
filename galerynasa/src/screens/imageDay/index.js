@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./imageDay.css";
-import { getAPOD } from "../../nasa.js";
+import InputMask from "react-input-mask";
+import { getAPOD, searchAPOD } from "../../nasa.js";
 
 export default function ImageDay() {
   const [apodData, setApodData] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [searchDate, setSearchDate] = useState(null);
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     const fetchAPOD = async () => {
@@ -18,8 +21,31 @@ export default function ImageDay() {
     setShowDetails(!showDetails);
   };
 
+  const handleSearch = async (event) => {
+    event.preventDefault();
+    const searchDate = event.target.date.value;
+    const data = await searchAPOD(searchDate);
+    setApodData(data);
+    setShowDetails(false);
+    setSearchDate(searchDate);
+  };
+
   return (
     <div className="screen-container">
+      <form onSubmit={handleSearch} className="search-form">
+        <div className="form-group">
+          <label htmlFor="date">Data:</label>
+          <InputMask
+            id="date"
+            mask="9999-99-99"
+            placeholder="Ano-Mês-Dia"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Buscar</button>
+      </form>
       <div className="library-body">
         <div className="image-card" onClick={toggleDetails}>
           {apodData && (
@@ -42,7 +68,7 @@ export default function ImageDay() {
         >
           {apodData && (
             <>
-              <p className="image-subtitle">{apodData.date}</p>
+              <p className="image-subtitle">{searchDate || apodData.date}</p>
               <p className="image-subtitle">{apodData.explanation}</p>
             </>
           )}
