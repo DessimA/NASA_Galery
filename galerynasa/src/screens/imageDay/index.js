@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./imageDay.css";
 import { getAPOD } from "../../nasa.js";
 
-export default function Library() {
+export default function ImageDay() {
   const [apodData, setApodData] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 

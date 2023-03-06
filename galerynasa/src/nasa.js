@@ -15,26 +15,14 @@ export const getAPOD = async () => {
   }
 };
 
-export const getRoverPhotos = async (roverName, earthDate) => {
+export const searchMarsPhotos = async (roverName, earthDate) => {
   try {
     const response = await axios.get(
       `${NASA_API_BASE_URL}/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${earthDate}&api_key=${NASA_API_KEY}`
     );
-    return response.data.photos;
-  } catch (error) {
-    console.error(`Error while fetching ${roverName} photos`, error);
-    return null;
-  }
-};
-
-export const getMarsWeather = async () => {
-  try {
-    const response = await axios.get(
-      `${NASA_API_BASE_URL}/insight_weather/?api_key=${NASA_API_KEY}&feedtype=json&ver=1.0`
-    );
     return response.data;
   } catch (error) {
-    console.error('Error while fetching Mars weather data', error);
+    console.error('Error while fetching Mars photos', error);
     return null;
   }
 };
