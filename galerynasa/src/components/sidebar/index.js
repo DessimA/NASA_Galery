@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./sidebar.css";
 import SidebarButton from "./sidebarButton";
 import { FaPlay, FaSignOutAlt } from "react-icons/fa";
-import { BsFillFileImageFill } from "react-icons/bs";
+import { BsFillFileImageFill, BsFillCalendar2MinusFill } from "react-icons/bs";
 
 export default function Sidebar() {
   const [image] = useState(
@@ -15,7 +15,7 @@ export default function Sidebar() {
       <img src={image} className="profile-img" alt="profile" />
       <div>
         <SidebarButton title="Player" to="/ImageView" icon={<FaPlay />} />
-        <SidebarButton title="Imagens" to="/" icon={<BsFillFileImageFill />} />
+        <SidebarButton title="Foto do Dia" to="/" icon={<BsFillCalendar2MinusFill />} />
         <SidebarButton
           title="Details"
           to="/image-details"
