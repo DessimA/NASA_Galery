@@ -42,7 +42,7 @@ export default function ImageSearch() {
     <div className="screen-container">
       <form onSubmit={handleSubmit} className="navbar-body">
         <div className="form-group">
-          <label htmlFor="rover">Rover</label>
+          <label htmlFor="rover">Rover: </label>
           <select
             id="rover"
             value={rover}
@@ -55,17 +55,17 @@ export default function ImageSearch() {
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="date">Data</label>
+          <label htmlFor="date">Data: </label>
           <InputMask
             id="date"
             mask="9999-99-99"
-            placeholder="AAAA-MM-DD"
+            placeholder="Ano-Mês-Dia"
             value={date}
             onChange={(event) => setDate(event.target.value)}
             required
           />
         </div>
-        <button type="submit">Pesquisar</button>
+        <button type="submit">Buscar</button>
       </form>
       {noPhotosFound ? (
         <p className="no-photos-message">Nenhuma imagem encontrada para esta data e rover.</p>
@@ -88,7 +88,7 @@ export default function ImageSearch() {
         >
           Anterior
         </button>
-        <span>Página {currentPage}</span>
+        <span>{currentPage}</span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={endIndex >= photos.length}

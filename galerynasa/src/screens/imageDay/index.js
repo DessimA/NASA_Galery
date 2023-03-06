@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./imageDay.css";
 import InputMask from "react-input-mask";
 import { getAPOD, searchAPOD } from "../../nasa.js";
@@ -8,6 +8,7 @@ export default function ImageDay() {
   const [showDetails, setShowDetails] = useState(false);
   const [searchDate, setSearchDate] = useState(null);
   const [date, setDate] = useState("");
+  const inputElement = useRef(null);
 
   useEffect(() => {
     const fetchAPOD = async () => {
@@ -23,7 +24,7 @@ export default function ImageDay() {
 
   const handleSearch = async (event) => {
     event.preventDefault();
-    const searchDate = event.target.date.value;
+    const searchDate = inputElement.current.value;
     const data = await searchAPOD(searchDate);
     setApodData(data);
     setShowDetails(false);
@@ -36,6 +37,7 @@ export default function ImageDay() {
         <div className="form-group">
           <label htmlFor="date">Data:</label>
           <InputMask
+            ref={inputElement}
             id="date"
             mask="9999-99-99"
             placeholder="Ano-Mês-Dia"
