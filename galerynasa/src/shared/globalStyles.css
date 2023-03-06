@@ -1,16 +1,12 @@
 .screen-container {
   width: calc(100% - 100px);
   height: 100%;
-  background-color: brown;
+  background-color: white;
   border-radius: 10px;
-  background-color: brown;
+  background-color: white;
   opacity: 1;
-  background-image: repeating-radial-gradient(
-      circle at center left,
-      transparent 0,
-      black 90px
-    ),
-    repeating-linear-gradient(brown,grey);
+  background: rgb(11,61,145);
+  background: linear-gradient(90deg, rgba(11,61,145,1) 0%, rgba(252,61,33,1) 49%, rgba(255,255,255,1) 100%);
 }
 
 .flex { 

@@ -6,23 +6,16 @@ import { BsFillFileImageFill } from "react-icons/bs";
 
 export default function Sidebar() {
   const [image] = useState(
-    "https://freesvg.org/img/abstract-user-flat-4.png"
-  );
+"https://assets.materialup.com/uploads/2979c2d8-d5dd-4576-8f4c-40133f4d324c/preview.jpg"  );
 
-  useEffect(() => {
-    
-  });
+  useEffect(() => {});
 
   return (
     <div className="sidebar-container">
       <img src={image} className="profile-img" alt="profile" />
       <div>
-        <SidebarButton title="Player" to="/player" icon={<FaPlay />} />
-        <SidebarButton
-          title="Imagens"
-          to="/"
-          icon={<BsFillFileImageFill />}
-        />
+        <SidebarButton title="Player" to="/ImageView" icon={<FaPlay />} />
+        <SidebarButton title="Imagens" to="/" icon={<BsFillFileImageFill />} />
         <SidebarButton
           title="Details"
           to="/image-details"

@@ -6,7 +6,7 @@ a {
     height: 80px;
     width: 80px;
     border-radius: 20px;
-    color: #d1c3b0;
+    color: #ffffff7f;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,13 +16,13 @@ a {
 }
 
 .btn-body.active{
-    background-color: white;
-    color: #000;
+    background-color: #0b3d91;
+    color: #fc3d21;
     transform: scale(1.05);
 }
 
 .btn-body:hover{
-    color: #ffffff;
+    color: #fff;
 }
 .btn-title{
     margin:  4px auto;

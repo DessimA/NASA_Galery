@@ -1,8 +1,8 @@
 import React from 'react';
-import './imageDetails.css';
+import './imageView.css';
 
 
-export default function ImageDetails() {
+export default function Library() {
 
   return (
     <div className="screen-container">
