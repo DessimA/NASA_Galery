@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import './imageSearch.css';
-import { searchMarsPhotos } from '../../nasa';
-import InputMask from 'react-input-mask';
+import React, { useState, useRef } from "react";
+import "./imageSearch.css";
+import { searchMarsPhotos } from "../../nasa";
+import InputMask from "react-input-mask";
+import { BsFillArrowRightSquareFill, BsFillArrowLeftSquareFill } from "react-icons/bs";
 
 export default function ImageSearch() {
-  const [rover, setRover] = useState('');
-  const [date, setDate] = useState('');
+  const [rover, setRover] = useState("");
+  const [date, setDate] = useState("");
   const [photos, setPhotos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [noPhotosFound, setNoPhotosFound] = useState(false);
+  const dateInputRef = useRef(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,7 +28,7 @@ export default function ImageSearch() {
         setNoPhotosFound(true);
       }
     } else {
-      console.log('Preencha todos os campos');
+      console.log("Preencha todos os campos");
     }
   };
 
@@ -63,17 +65,25 @@ export default function ImageSearch() {
             value={date}
             onChange={(event) => setDate(event.target.value)}
             required
+            inputRef={dateInputRef}
           />
         </div>
         <button type="submit">Buscar</button>
       </form>
       {noPhotosFound ? (
-        <p className="no-photos-message">Nenhuma imagem encontrada para esta data e rover.</p>
+        <p className="no-photos-message">
+          Nenhuma imagem encontrada para esta data e rover.
+        </p>
       ) : (
         <div className="photos-container">
           {currentPhotos.map((photo) => (
             <div key={photo.id} className="photo-card">
-              <img src={photo.img_src} alt={photo.id} width="150" height="100" />
+              <img
+                src={photo.img_src}
+                alt={photo.id}
+                width="150"
+                height="100"
+              />
               <div className="photo-details">
                 <p>Título: {photo.id}</p>
               </div>
@@ -86,14 +96,14 @@ export default function ImageSearch() {
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Anterior
+          <BsFillArrowLeftSquareFill />
         </button>
         <span>{currentPage}</span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={endIndex >= photos.length}
         >
-          Próxima
+          <BsFillArrowRightSquareFill />
         </button>
       </div>
     </div>
