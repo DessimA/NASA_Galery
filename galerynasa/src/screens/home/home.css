@@ -1,7 +1,7 @@
 .main-body{
     height: 100vh;
     width: 100vw;
-    background-color: black ;
+    background-color: #051a3f ;
     border-radius: 10px;
     display: flex;
 }

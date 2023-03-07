@@ -14,7 +14,7 @@
   width: 80%;
   padding: 10px;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgb(25, 25, 25);
 }
 
 .form-group {
@@ -48,7 +48,7 @@ button[type='submit'] {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #c23d3b;
   color: white;
   cursor: pointer;
 }
@@ -56,7 +56,10 @@ button[type='submit'] {
 .no-photos-message {
   font-size: 1.2rem;
   margin-top: 20px;
-  color: #333;
+  color: #ffffff;
+  background-color: black;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .photos-container {

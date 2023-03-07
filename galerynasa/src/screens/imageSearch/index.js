@@ -2,7 +2,12 @@ import React, { useState, useRef } from "react";
 import "./imageSearch.css";
 import { searchMarsPhotos } from "../../nasa";
 import InputMask from "react-input-mask";
-import { BsFillArrowRightSquareFill, BsFillArrowLeftSquareFill } from "react-icons/bs";
+import {
+  BsFillArrowRightSquareFill,
+  BsFillArrowLeftSquareFill,
+  BsSearch,
+} from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 export default function ImageSearch() {
   const [rover, setRover] = useState("");
@@ -68,7 +73,9 @@ export default function ImageSearch() {
             inputRef={dateInputRef}
           />
         </div>
-        <button type="submit">Buscar</button>
+        <button type="submit">
+          <BsSearch />
+        </button>
       </form>
       {noPhotosFound ? (
         <p className="no-photos-message">
@@ -78,12 +85,19 @@ export default function ImageSearch() {
         <div className="photos-container">
           {currentPhotos.map((photo) => (
             <div key={photo.id} className="photo-card">
-              <img
-                src={photo.img_src}
-                alt={photo.id}
-                width="150"
-                height="100"
-              />
+              <Link
+                to={{
+                  pathname: "/image-view",
+                  search: `?src=${photo.img_src}`,
+                }}
+              >
+                <img
+                  src={photo.img_src}
+                  alt={photo.id}
+                  width="150"
+                  height="100"
+                />
+              </Link>
               <div className="photo-details">
                 <p>Título: {photo.id}</p>
               </div>

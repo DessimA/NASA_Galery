@@ -5,7 +5,7 @@ a {
 .btn-body{
     height: 80px;
     width: 80px;
-    border-radius: 20px;
+    border-radius: 10px 0px 0px 10px;
     color: #ffffff7f;
     display: flex;
     align-items: center;
@@ -16,7 +16,7 @@ a {
 }
 
 .btn-body.active{
-    background-color: #fc3d21;
+    background-color: #c23d3b;
     color: white;
     transform: scale(1.05);
 }
