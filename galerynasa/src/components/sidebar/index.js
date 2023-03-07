@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./sidebar.css";
 import SidebarButton from "./sidebarButton";
-import { FaSignOutAlt } from "react-icons/fa";
-import { BsSearch, BsFillCalendar2MinusFill, BsFillEyeFill } from "react-icons/bs";
+import { BsSearch, BsFillCalendar2MinusFill, BsFillEyeFill, BsInfoSquare } from "react-icons/bs";
 
 export default function Sidebar() {
   const [image] = useState(
@@ -22,7 +21,7 @@ export default function Sidebar() {
           icon={<BsSearch />}
         />
       </div>
-      <SidebarButton title="Sign Out" to="" icon={<FaSignOutAlt />} />
+      <SidebarButton title="Sobre" to="" icon={<BsInfoSquare />} />
     </div>
   );
 }
