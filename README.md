@@ -25,7 +25,9 @@ A aplicação consiste em uma única tela principal, que terá um menu para que 
 
 Abaixo segue um preview do design das telas:
 
-
+![day_photo](https://user-images.githubusercontent.com/60760405/223551656-8528bfd6-ac21-4cd1-bc07-db61b369af8c.png)
+![search](https://user-images.githubusercontent.com/60760405/223551647-58d2e213-4cb7-4bb1-ae0f-986db533d568.png)
+![view](https://user-images.githubusercontent.com/60760405/223551653-e4aee7cf-29b0-4dca-ad62-f9404da3d8a0.png)
 
 ## :four: Funcionalidades
 A aplicação oferecerá várias funcionalidades interessantes, incluindo:
