@@ -1,11 +1,10 @@
 .screen-container {
   width: calc(100% - 100px);
   height: 100%;
-  background-color: white;
   border-radius: 10px;
   background-color: white;
   opacity: 1;
-  background: rgb(11,61,145);
+  background: black;
   background: linear-gradient(90deg, rgba(11,61,145,1) 0%, rgba(252,61,33,1) 49%, rgba(255,255,255,1) 100%);
 }
 
