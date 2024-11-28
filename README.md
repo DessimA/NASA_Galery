@@ -1,4 +1,4 @@
-# :rocket: Programação Web 2 - ProjetoFinal [NASA Galery]
+# :rocket: NASA Galery
 
 ## :zero: Resumo
   A aplicação "Galeria de Imagens da NASA" oferece um valor duplo: oferece uma oportunidade de aprendizado para os desenvolvedores que querem aprender a consumir APIs em aplicações React JS, ao mesmo tempo em que fornece aos usuários uma oportunidade única de explorar o universo e suas maravilhas de maneira envolvente e informativa.
