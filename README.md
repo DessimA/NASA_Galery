@@ -165,6 +165,8 @@ NASA_Galery/
 
 ## 🚀 Configuração e Instalação: Comece Sua Jornada!
 
+Este projeto está implantado no GitHub Pages e pode ser acessado em: [https://dessima.github.io/NASA_Galery](https://dessima.github.io/NASA_Galery)
+
 Para colocar este projeto em funcionamento em sua máquina local e começar a explorar o universo, siga estes passos simples:
 
 1.  **Clone o repositório:**
