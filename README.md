@@ -60,24 +60,24 @@ graph TD
     C --> Q[**Contexto de Favoritos**]
     Q --> R[**Gerenciamento de Estado**]
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px,font-weight:bold
-    style B fill:#bbf,stroke:#333,stroke-width:2px,font-weight:bold
-    style C fill:#ccf,stroke:#333,stroke-width:2px,font-weight:bold
-    style D fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
-    style E fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
-    style F fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
-    style G fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
-    style H fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
-    style I fill:#fcf,stroke:#333,stroke-width:2px,font-weight:bold
-    style J fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
-    style K fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
-    style L fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
-    style M fill:#fdd,stroke:#333,stroke-width:2px,font-weight:bold
-    style N fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
-    style O fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
-    style P fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
-    style Q fill:#fdf,stroke:#333,stroke-width:2px,font-weight:bold
-    style R fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
+    style A fill:#f9f,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style B fill:#bbf,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style C fill:#ccf,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style D fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style E fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style F fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style G fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style H fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style I fill:#fcf,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style J fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style K fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style L fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style M fill:#fdd,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style N fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style O fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style P fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style Q fill:#fdf,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
+    style R fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold,color:#000
 ```
 
 ### 🧠 Razões por Trás das Decisões Arquiteturais:
@@ -109,6 +109,7 @@ graph TD
 
 ```
 NASA_Galery/
+├── .env                    # Variáveis de ambiente (ex: chaves de API)
 ├── public/                 # Arquivos estáticos públicos (index.html, favicons)
 ├── src/                    # Código fonte da aplicação
 │   ├── api/                # Módulos para interação com as APIs da NASA (APOD, Imagens, Rovers)
