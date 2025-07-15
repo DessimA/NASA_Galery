@@ -39,45 +39,45 @@ A arquitetura da Galeria NASA foi pensada para ser modular, escalável e de fác
 
 ```mermaid
 graph TD
-    A[App.js] --> B(Navegação - React Router DOM)
-    B --> C{Telas/Páginas}
-    C --> D[Home]
-    C --> E[Imagem do Dia]
-    C --> F[Pesquisa de Imagens]
-    C --> G[Rovers de Marte]
-    C --> H[Favoritos]
+    A[**App.js**] --> B(**Navegação - React Router DOM**)
+    B --> C{**Telas/Páginas**}
+    C --> D[**Home**]
+    C --> E[**Imagem do Dia**]
+    C --> F[**Pesquisa de Imagens**]
+    C --> G[**Rovers de Marte**]
+    C --> H[**Favoritos**]
 
-    C --> I[Componentes Reutilizáveis]
-    I --> J[Modal]
-    I --> K[Sidebar]
-    I --> L[Botões]
+    C --> I[**Componentes Reutilizáveis**]
+    I --> J[**Modal**]
+    I --> K[**Sidebar**]
+    I --> L[**Botões**]
 
-    C --> M[APIs da NASA]
-    M --> N[APOD API]
-    M --> O[Images API]
-    M --> P[Mars Rover Photos API]
+    C --> M[**APIs da NASA**]
+    M --> N[**APOD API**]
+    M --> O[**Images API**]
+    M --> P[**Mars Rover Photos API**]
 
-    C --> Q[Contexto de Favoritos]
-    Q --> R[Gerenciamento de Estado]
+    C --> Q[**Contexto de Favoritos**]
+    Q --> R[**Gerenciamento de Estado**]
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#ccf,stroke:#333,stroke-width:2px
-    style D fill:#dfd,stroke:#333,stroke-width:2px
-    style E fill:#dfd,stroke:#333,stroke-width:2px
-    style F fill:#dfd,stroke:#333,stroke-width:2px
-    style G fill:#dfd,stroke:#333,stroke-width:2px
-    style H fill:#dfd,stroke:#333,stroke-width:2px
-    style I fill:#fcf,stroke:#333,stroke-width:2px
-    style J fill:#ffd,stroke:#333,stroke-width:2px
-    style K fill:#ffd,stroke:#333,stroke-width:2px
-    style L fill:#ffd,stroke:#333,stroke-width:2px
-    style M fill:#fdd,stroke:#333,stroke-width:2px
-    style N fill:#eee,stroke:#333,stroke-width:2px
-    style O fill:#eee,stroke:#333,stroke-width:2px
-    style P fill:#eee,stroke:#333,stroke-width:2px
-    style Q fill:#fdf,stroke:#333,stroke-width:2px
-    style R fill:#eee,stroke:#333,stroke-width:2px
+    style A fill:#f9f,stroke:#333,stroke-width:2px,font-weight:bold
+    style B fill:#bbf,stroke:#333,stroke-width:2px,font-weight:bold
+    style C fill:#ccf,stroke:#333,stroke-width:2px,font-weight:bold
+    style D fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
+    style E fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
+    style F fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
+    style G fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
+    style H fill:#dfd,stroke:#333,stroke-width:2px,font-weight:bold
+    style I fill:#fcf,stroke:#333,stroke-width:2px,font-weight:bold
+    style J fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
+    style K fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
+    style L fill:#ffd,stroke:#333,stroke-width:2px,font-weight:bold
+    style M fill:#fdd,stroke:#333,stroke-width:2px,font-weight:bold
+    style N fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
+    style O fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
+    style P fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
+    style Q fill:#fdf,stroke:#333,stroke-width:2px,font-weight:bold
+    style R fill:#eee,stroke:#333,stroke-width:2px,font-weight:bold
 ```
 
 ### 🧠 Razões por Trás das Decisões Arquiteturais:
