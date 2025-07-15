@@ -1,0 +1,63 @@
+/* Sidebar Button Styles */
+.sidebar-button {
+  background-color: var(--secondary-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  padding: var(--button-padding-y) var(--spacing-md); /* Consistent horizontal padding */
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  display: flex; /* Ensure flex container */
+  align-items: center; /* Vertically center items */
+  width: 100%;
+  min-height: 40px; /* Enforce consistent height */
+  margin-bottom: var(--spacing-sm);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-button:hover {
+  background-color: var(--accent-color);
+  color: var(--nasa-white);
+}
+
+.sidebar-button.active {
+  background-color: var(--accent-color);
+  color: var(--nasa-white);
+  font-weight: 600;
+}
+
+.button-icon {
+  margin-right: var(--spacing-sm); /* Consistent spacing between icon and text */
+  font-size: 1.2em;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  padding-left: var(--spacing-md); /* Add padding to icon for content alignment */
+}
+
+.sidebar-button.collapsed {
+  width: 40px; /* Adjusted width to fit within collapsed sidebar */
+  justify-content: center;
+  padding: var(--spacing-sm); /* Padding for icon-only view */
+  margin: 0 auto var(--spacing-sm) auto; /* Center the button and maintain bottom margin */
+}
+
+.sidebar-button.collapsed .button-icon {
+  margin-right: 0;
+  padding-left: 0; /* Remove padding for collapsed state */
+}
+
+.sidebar-button.collapsed .button-text {
+  display: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar-button {
+    margin-bottom: 0;
+    margin-left: var(--spacing-sm);
+    width: auto;
+  }
+
+  .button-text {
+    display: none;
+  }
+}

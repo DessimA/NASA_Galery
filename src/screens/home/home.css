@@ -1,0 +1,112 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-xl);
+    height: 100%;
+}
+
+.home-title {
+    font-size: 2.5em;
+    color: var(--primary-text);
+    margin-bottom: var(--spacing-lg);
+}
+
+.home-subtitle {
+    font-size: 1.2em;
+    color: var(--secondary-text);
+    max-width: 600px;
+    margin-bottom: var(--spacing-xl);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg);
+}
+
+.feature-item {
+    background-color: var(--secondary-bg);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    width: 250px;
+    text-align: left;
+}
+
+.feature-title {
+    font-size: 1.2em;
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.feature-description {
+    font-size: 1em;
+    color: var(--secondary-text);
+}
+
+.developer-info {
+    margin-top: var(--spacing-xl);
+    text-align: center;
+}
+
+.developer-title {
+    font-size: 1.5em;
+    color: var(--primary-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.developer-name {
+    font-size: 1.2em;
+    color: var(--secondary-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto var(--spacing-sm) auto; /* Centered horizontally */
+    border: 3px solid var(--accent-color);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-image:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+}
+
+.social-icon {
+    font-size: 2em;
+    color: var(--primary-text);
+    transition: color 0.2s ease;
+}
+
+.social-icon:hover {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .home-title {
+        font-size: 2em;
+    }
+
+    .home-subtitle {
+        font-size: 1em;
+    }
+
+    .feature-item {
+        width: 100%;
+    }
+}

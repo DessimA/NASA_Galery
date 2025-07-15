@@ -1,0 +1,121 @@
+/* CSS Variables for theming */
+:root {
+  --nasa-blue: #0B3D91;
+  --nasa-red: #FC3D21;
+  --nasa-white: #FFFFFF;
+
+  --primary-bg: #020F26;
+  --secondary-bg: #051F4A;
+  --primary-text: #FFFFFF;
+  --secondary-text: #A0A0A0;
+  --accent-color: #D92906;
+  --border-color: #0A3366;
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Spacing Variables */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+
+  /* Button Variables */
+  --button-padding-y: 10px;
+  --button-padding-x: 15px;
+  --button-border-radius: 6px;
+}
+
+/* Global Resets and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  line-height: 1.6;
+  /* Moon texture background */
+  background-image: url('https://www.nasa.gov/sites/default/files/thumbnails/image/pia23721-16-main.jpg'); /* Placeholder: Replace with your moon texture image */
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Main Layout */
+.main-body {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content-container {
+  flex-grow: 1;
+  padding: var(--spacing-lg); /* Use spacing variable */
+  overflow-y: auto;
+  margin-left: var(--sidebar-open-width); /* Initial margin for open sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-container.collapsed + .content-container {
+  margin-left: var(--sidebar-collapsed-width); /* Adjust margin when sidebar is collapsed */
+}
+
+/* Standard Button Styles */
+.btn {
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: var(--nasa-white);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: darken(var(--accent-color), 10%); /* Placeholder for a darker shade */
+}
+
+.btn-secondary {
+  background-color: var(--secondary-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-color);
+}
+
+/* Responsive Design: Mobile First */
+@media (max-width: 768px) {
+  .main-body {
+    flex-direction: column;
+    margin-left: 0; /* No margin on mobile */
+  }
+
+  .content-container {
+    padding: var(--spacing-sm); /* Reduced padding on mobile */
+    margin-left: 0 !important; /* Force no left margin on mobile */
+    margin-top: var(--sidebar-collapsed-width); /* Space for the sticky mobile sidebar */
+  }
+}

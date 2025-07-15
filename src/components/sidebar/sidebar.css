@@ -1,0 +1,184 @@
+:root {
+  --sidebar-open-width: 200px;
+  --sidebar-collapsed-width: 60px;
+}
+
+/* Sidebar Styles */
+.sidebar-container {
+  background-color: var(--secondary-bg);
+  border-right: 1px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-sm); /* Added horizontal padding */
+  width: var(--sidebar-open-width); /* Use variable */
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to start in expanded state */
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.sidebar-container.collapsed {
+  width: var(--sidebar-collapsed-width); /* Use variable */
+  align-items: center;
+  padding: var(--spacing-sm) 0; /* Reduced vertical padding, no horizontal */
+  background-color: transparent; /* Make background transparent when collapsed */
+  border-right: none; /* Make border transparent when collapsed */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
+}
+
+.sidebar-container.collapsed .sidebar-header {
+  justify-content: center;
+}
+
+.profile-icon {
+  font-size: 3em; /* Adjust size as needed */
+  color: var(--nasa-red); /* Example color */
+  margin-right: var(--spacing-md);
+}
+
+.nasa-logo {
+  width: 40px; /* Adjust size as needed */
+  height: auto;
+  margin-right: var(--spacing-md);
+}
+
+.sidebar-container.collapsed .profile-icon {
+  margin-right: 0;
+}
+
+.sidebar-container.collapsed .nasa-logo {
+  margin-right: 0;
+}
+
+.sidebar-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .sidebar-title::after {
+    content: "GN";
+  }
+  .sidebar-title {
+    font-size: 1.5em; /* Adjust font size for mobile */
+  }
+  .sidebar-title:not(.collapsed) {
+    display: none; /* Hide original text when not collapsed */
+  }
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--primary-text);
+  font-size: 1.5em;
+  cursor: pointer;
+  margin-bottom: var(--spacing-lg);
+  align-self: flex-end;
+}
+
+.sidebar-container.collapsed .sidebar-toggle {
+  align-self: center;
+}
+
+.sidebar-nav {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Stretch items to fill width */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-md);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    height: auto;
+    z-index: 1000;
+    transition: all 0.3s ease; /* Added transition for smooth collapse */
+  }
+
+  .sidebar-container.collapsed {
+    height: var(--sidebar-collapsed-width); /* Set height to collapsed width for mobile */
+    overflow: hidden; /* Hide overflowing content */
+    padding: var(--spacing-sm); /* Adjust padding for collapsed state */
+    justify-content: center; /* Center the toggle button */
+  }
+
+  .sidebar-container.collapsed .sidebar-header,
+  .sidebar-container.collapsed .sidebar-nav {
+    display: none; /* Hide header and nav when collapsed */
+  }
+
+  .sidebar-toggle {
+    display: flex; /* Ensure toggle is visible on mobile */
+    align-items: center;
+    justify-content: center;
+    width: var(--sidebar-collapsed-width); /* Make it circular */
+    height: var(--sidebar-collapsed-width); /* Make it circular */
+    background-color: transparent; /* Make background transparent */
+    border-radius: 0; /* Remove border-radius */
+    color: var(--primary-text); /* Ensure icon color is visible */
+    font-size: 1.5em;
+    margin: 0 auto; /* Center the button */
+  }
+
+  .sidebar-container:not(.collapsed) .sidebar-toggle {
+    background: none; /* Remove background when expanded */
+    color: var(--primary-text); /* Revert color when expanded */
+    border-radius: 0; /* Remove border-radius when expanded */
+    width: auto;
+    height: auto;
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 0;
+    width: auto;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .sidebar-button {
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: auto;
+    padding: var(--button-padding-y) var(--spacing-sm);
+  }
+
+  .sidebar-button .button-text {
+    display: none;
+  }
+
+  .nasa-logo {
+    margin-right: var(--spacing-sm);
+  }
+}
