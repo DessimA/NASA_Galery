@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./imageDay.css";
 import { getAPOD, searchAPOD } from "../../api/apod";
+import { useFavorites } from "../../context/FavoritesContext";
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 export default function ImageDay() {
   const [apodData, setApodData] = useState(null);
   const [date, setDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchAPOD = async () => {
@@ -27,7 +30,6 @@ export default function ImageDay() {
     event.preventDefault();
     try {
       setIsLoading(true);
-      // Ensure date is in YYYY-MM-DD format before sending to API
       const formattedDate = date ? new Date(date).toISOString().split('T')[0] : '';
       const data = await searchAPOD(formattedDate);
       setApodData(data);
@@ -36,6 +38,26 @@ export default function ImageDay() {
       setError("Falha ao buscar a imagem para a data especificada. Verifique o formato da data e tente novamente.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFavoriteClick = () => {
+    const favoriteItem = {
+      data: [{
+        nasa_id: apodData.date, 
+        title: apodData.title,
+        description: apodData.explanation,
+        date_created: apodData.date
+      }],
+      links: [{
+        href: apodData.url
+      }]
+    };
+
+    if (isFavorite(apodData.date)) {
+      removeFavorite(apodData.date);
+    } else {
+      addFavorite(favoriteItem);
     }
   };
 
@@ -75,6 +97,10 @@ export default function ImageDay() {
           )}
           <div className="image-details">
             <h2 className="image-title">{apodData.title}</h2>
+            <button onClick={handleFavoriteClick} className="favorite-button">
+              {isFavorite(apodData.date) ? <FaHeart /> : <FaRegHeart />}
+              {isFavorite(apodData.date) ? ' Remover dos Favoritos' : ' Adicionar aos Favoritos'}
+            </button>
             <p className="image-explanation">{apodData.explanation}</p>
             <p><strong>Data:</strong> {apodData.date}</p>
             {apodData.copyright && (
