@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/NASA_Galery/static/css/main.5cb3f0b7.css",
+    "main.css": "/NASA_Galery/static/css/main.733cd9a0.css",
     "main.js": "/NASA_Galery/static/js/main.fdd5ec99.js",
     "static/js/488.999cb9e4.chunk.js": "/NASA_Galery/static/js/488.999cb9e4.chunk.js",
     "static/media/profile-image.jpg": "/NASA_Galery/static/media/profile-image.d1461e08970b17e537d5.jpg",
     "static/media/nasa-logo.svg": "/NASA_Galery/static/media/nasa-logo.d30e3cd547a682bba78cf1e5e058d924.svg",
     "index.html": "/NASA_Galery/index.html",
-    "main.5cb3f0b7.css.map": "/NASA_Galery/static/css/main.5cb3f0b7.css.map",
+    "main.733cd9a0.css.map": "/NASA_Galery/static/css/main.733cd9a0.css.map",
     "main.fdd5ec99.js.map": "/NASA_Galery/static/js/main.fdd5ec99.js.map",
     "488.999cb9e4.chunk.js.map": "/NASA_Galery/static/js/488.999cb9e4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5cb3f0b7.css",
+    "static/css/main.733cd9a0.css",
     "static/js/main.fdd5ec99.js"
   ]
 }
