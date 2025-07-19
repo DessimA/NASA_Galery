@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./imageSearch.css";
 import { searchMarsPhotos, getRoverManifest } from "../../api/marsRover";
 import Modal from "../../components/modal";
+import { useFavorites } from "../../context/FavoritesContext";
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 export default function ImageSearch() {
   const [rover, setRover] = useState("curiosity");
@@ -23,6 +25,7 @@ export default function ImageSearch() {
   const [manifest, setManifest] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchManifest = async () => {
@@ -54,6 +57,26 @@ export default function ImageSearch() {
       setPhotos([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFavoriteClick = (photo) => {
+    const favoriteItem = {
+      data: [{
+        nasa_id: photo.id,
+        title: `Mars Rover ${photo.rover.name} - ${photo.id}`,
+        description: `Photo taken by ${photo.camera.full_name} on ${photo.earth_date} (Sol ${photo.sol}).`,
+        date_created: photo.earth_date
+      }],
+      links: [{
+        href: photo.img_src
+      }]
+    };
+
+    if (isFavorite(photo.id)) {
+      removeFavorite(photo.id);
+    } else {
+      addFavorite(favoriteItem);
     }
   };
 
