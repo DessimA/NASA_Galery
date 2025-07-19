@@ -61,6 +61,11 @@ export default function ImageSearch() {
     <div className="image-search-container">
       <h1 className="search-title">Pesquisar Fotos do Rover de Marte</h1>
       <form onSubmit={handleSubmit} className="search-bar">
+        <select value={rover} onChange={(e) => setRover(e.target.value)}>
+          <option value="curiosity">Curiosity</option>
+          <option value="opportunity">Opportunity</option>
+          <option value="spirit">Spirit</option>
+        </select>
         {/* Form inputs remain the same */}
       </form>
 
