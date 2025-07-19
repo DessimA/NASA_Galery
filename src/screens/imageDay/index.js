@@ -95,9 +95,14 @@ export default function ImageDay() {
           ) : (
             <img src={apodData.url} alt={apodData.title} className="apod-image" />
           )}
-          <button onClick={handleFavoriteClick} className="favorite-button">
+          <button
+            className={`favorite-button ${isFavorite(apodData.date) ? 'favorited' : ''}`}
+            onClick={handleFavoriteClick}
+          >
             {isFavorite(apodData.date) ? <FaHeart /> : <FaRegHeart />}
-            {isFavorite(apodData.date) ? ' Remover dos Favoritos' : ' Adicionar aos Favoritos'}
+            <span className="button-text">
+              {isFavorite(apodData.date) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+            </span>
           </button>
           <div className="image-details">
             <h2 className="image-title">{apodData.title}</h2>
