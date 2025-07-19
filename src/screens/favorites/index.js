@@ -24,17 +24,23 @@ export default function Favorites() {
         <p className="no-favorites-message">Você ainda não adicionou nenhuma imagem aos favoritos.</p>
       ) : (
         <div className="favorites-grid">
-          {favoriteList.map((item) => (
-            <div key={item.data[0].nasa_id} className="photo-card">
-              <img src={item.links[0].href} alt={item.data[0].title} onClick={() => openModal(item)} />
-              <div className="photo-details">
-                <p className="photo-title">{item.data[0].title}</p>
-                <button className="remove-favorite-button" onClick={() => removeFavorite(item.data[0].nasa_id)}>
-                  <FaHeartBroken /> Remover
-                </button>
+          {favoriteList.map((item) => {
+            const nasaId = item.data[0].nasa_id;
+            const title = item.data[0].title;
+            const imageUrl = item.links[0].href;
+
+            return (
+              <div key={nasaId} className="photo-card">
+                <img src={imageUrl} alt={title} onClick={() => openModal(item)} />
+                <div className="photo-details">
+                  <p className="photo-title">{title}</p>
+                  <button className="remove-favorite-button" onClick={() => removeFavorite(nasaId)}>
+                    <FaHeartBroken /> Remover
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
       <Modal isOpen={!!selectedImage} onClose={closeModal} imageContent={selectedImage} isFromFavorites={true} />

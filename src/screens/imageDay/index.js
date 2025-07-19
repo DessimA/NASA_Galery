@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./imageDay.css";
+import "../../components/modal/modal.css";
 import { getAPOD, searchAPOD } from "../../api/apod";
 import { useFavorites } from "../../context/FavoritesContext";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
