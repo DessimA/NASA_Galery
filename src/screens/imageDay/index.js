@@ -48,7 +48,8 @@ export default function ImageDay() {
         nasa_id: apodData.date, 
         title: apodData.title,
         description: apodData.explanation,
-        date_created: apodData.date
+        date_created: apodData.date,
+        copyright: apodData.copyright
       }],
       links: [{
         href: apodData.url

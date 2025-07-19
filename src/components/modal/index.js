@@ -43,6 +43,9 @@ export default function Modal({ isOpen, onClose, imageContent, isFromFavorites }
           <p><strong>ID NASA:</strong> {nasaId}</p>
           <p><strong>Data de Criação:</strong> {dateCreated}</p>
           <p><strong>Descrição:</strong> {description}</p>
+          {imageContent.data[0].copyright && (
+            <p><strong>Créditos:</strong> {imageContent.data[0].copyright}</p>
+          )}
         </div>
       </div>
     </div>
