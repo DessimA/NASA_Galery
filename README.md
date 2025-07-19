@@ -29,7 +29,6 @@ Construído com as melhores ferramentas para garantir performance e uma experiê
 *   **React:** A biblioteca JavaScript para construir interfaces de usuário dinâmicas e reativas. ⚛️
 *   **Axios:** Um cliente HTTP baseado em Promises para fazer requisições às APIs da NASA de forma eficiente. 📡
 *   **Bootstrap:** Um framework CSS popular para um design responsivo e elegante, garantindo que a galeria fique ótima em qualquer dispositivo. 🎨
-*   **React Router DOM:** Para gerenciar a navegação entre as diferentes seções da aplicação de forma declarativa. 🛣️
 *   **React Icons:** Uma vasta biblioteca de ícones para uma interface mais visual e intuitiva. 🖼️
 *   **React Input Mask:** Para formatação de entrada de dados, como datas, garantindo a usabilidade. 📝
 
@@ -39,7 +38,7 @@ A arquitetura da Galeria NASA foi pensada para ser modular, escalável e de fác
 
 ```mermaid
 graph TD
-    A[**App.js**] --> B(**Navegação - React Router DOM**)
+    A[**App.js**] --> B(**Navegação - SPA Customizada**)
     B --> C{**Telas/Páginas**}
     C --> D[**Home**]
     C --> E[**Imagem do Dia**]
@@ -89,6 +88,10 @@ graph TD
 *   **Gerenciamento de Estado com Context API (para Favoritos):**
     *   **Decisão:** Implementar um `FavoritesContext.js` para gerenciar o estado dos itens favoritos.
     *   **Razão:** Para um estado global simples como a lista de favoritos, a Context API do React é uma solução leve e eficiente. Evita o "prop drilling" (passar props por muitos níveis de componentes) e centraliza a lógica de adicionar/remover favoritos, tornando-a acessível a qualquer componente que precise dela.
+
+*   **Tratamento de Erros Aprimorado:**
+    *   **Decisão:** Implementar tratamento de erros específico para limites de API (ex: 429 Too Many Requests).
+    *   **Razão:** Oferece feedback mais claro e útil ao usuário, informando-o sobre a causa do erro (limite de API excedido) e o que ele pode fazer (tentar novamente mais tarde/amanhã), melhorando a experiência do usuário e a percepção de robustez da aplicação.
 
 *   **Estrutura de Pastas Lógica:**
     *   **Decisão:** Organizar o código em pastas como `api`, `assets`, `components`, `context`, `screens`, `shared`.
