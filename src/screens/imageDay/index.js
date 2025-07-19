@@ -19,7 +19,13 @@ export default function ImageDay() {
         const data = await getAPOD();
         setApodData(data);
       } catch (err) {
-        setError("Failed to fetch a imagem do dia. Por favor, tente novamente mais tarde.");
+        if (err.response && err.response.status === 429) {
+          setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
+        } else if (err.response && err.response.data && err.response.data.msg && err.response.data.msg.includes("API rate limit exceeded")) {
+          setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
+        } else {
+          setError("Falha ao buscar a imagem do dia. Por favor, tente novamente mais tarde.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -36,7 +42,13 @@ export default function ImageDay() {
       setApodData(data);
       setError(null);
     } catch (err) {
-      setError("Falha ao buscar a imagem para a data especificada. Verifique o formato da data e tente novamente.");
+      if (err.response && err.response.status === 429) {
+        setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
+      } else if (err.response && err.response.data && err.response.data.msg && err.response.data.msg.includes("API rate limit exceeded")) {
+        setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
+      } else {
+        setError("Falha ao buscar a imagem para a data especificada. Verifique o formato da data e tente novamente.");
+      }
     } finally {
       setIsLoading(false);
     }
