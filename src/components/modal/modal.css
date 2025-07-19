@@ -23,6 +23,28 @@
     overflow-y: auto; /* Adicionado para permitir rolagem vertical */
 }
 
+/* Custom Scrollbar for Webkit browsers */
+.modal-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: var(--secondary-bg);
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 10px;
+    border: 3px solid var(--secondary-bg);
+}
+
+/* Custom Scrollbar for Firefox */
+.modal-content {
+    scrollbar-width: thin; /* "auto" or "thin" */
+    scrollbar-color: var(--accent-color) var(--secondary-bg); /* thumb color track color */
+}
+
 .modal-close-button {
     position: absolute;
     top: var(--spacing-sm);
