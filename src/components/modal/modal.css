@@ -15,11 +15,12 @@
     background-color: var(--secondary-bg);
     padding: var(--spacing-lg);
     border-radius: 8px;
-    position: relative;
-    max-width: 95vw; /* Increased width */
-    max-height: 95vh; /* Increased height */
+    position: relative; /* Adicionado para posicionamento absoluto dos botões */
+    max-width: 80vw; /* Ajustado para ocupar mais espaço no desktop */
+    max-height: 90vh; /* Ajustado para ocupar mais espaço no desktop */
     display: flex; /* Added flex to manage content */
     flex-direction: column; /* Stack content vertically */
+    overflow-y: auto; /* Adicionado para permitir rolagem vertical */
 }
 
 .modal-close-button {
@@ -31,6 +32,7 @@
     color: var(--primary-text);
     font-size: 2em;
     cursor: pointer;
+    z-index: 10; /* Para garantir que fique acima da imagem */
 }
 
 .modal-content img {
@@ -39,6 +41,34 @@
     display: block;
     margin: auto;
     flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+/* Estilo para o botão de favoritos no modal */
+.modal-content .favorite-button {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm); /* Posicionado no canto superior esquerdo */
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: var(--nasa-white);
+    z-index: 10; /* Para garantir que fique acima da imagem */
+    transition: background-color 0.2s ease;
+}
+
+.modal-content .favorite-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content .favorite-button.favorited {
+    color: var(--nasa-red); /* Cor para favoritado */
 }
 
 /* Custom Scrollbar for modal content */

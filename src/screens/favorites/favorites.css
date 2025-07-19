@@ -31,6 +31,7 @@
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease;
+    position: relative; /* Adicionado para posicionamento absoluto do botão */
 }
 
 .photo-card:hover {
@@ -43,8 +44,37 @@
     object-fit: cover;
 }
 
+/* Estilo para o botão de favoritos nos cards */
+.photo-card .favorite-button {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm); /* Posicionado no canto superior esquerdo */
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: var(--nasa-white);
+    z-index: 10; /* Para garantir que fique acima da imagem */
+    transition: background-color 0.2s ease;
+}
+
+.photo-card .favorite-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.photo-card .favorite-button.favorited {
+    color: var(--nasa-red); /* Cor para favoritado */
+}
+
 .photo-details {
     padding: var(--spacing-md);
+    word-wrap: break-word; /* Garante que o texto quebre a linha */
 }
 
 .photo-title {

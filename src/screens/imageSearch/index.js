@@ -83,8 +83,14 @@ export default function ImageSearch() {
 
       <div className="results-grid">
         {photos.map((photo) => (
-          <div key={photo.id} className="photo-card" onClick={() => setSelectedImage(photo)}>
-            <img src={photo.img_src} alt={`Rover de Marte ${rover} - ${photo.id}`} />
+          <div key={photo.id} className="photo-card">
+            <img src={photo.img_src} alt={`Rover de Marte ${rover} - ${photo.id}`} onClick={() => setSelectedImage(photo)} />
+            <button
+              className={`favorite-button ${isFavorite(photo.id) ? 'favorited' : ''}`}
+              onClick={() => handleFavoriteClick(photo)}
+            >
+              {isFavorite(photo.id) ? <FaHeart /> : <FaRegHeart />}
+            </button>
             <div className="photo-details">
               <p className="photo-date">{photo.earth_date}</p>
               <p className="photo-camera">{photo.camera.full_name}</p>

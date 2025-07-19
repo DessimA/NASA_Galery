@@ -34,9 +34,6 @@ export default function Modal({ isOpen, onClose, imageContent, isFromFavorites }
           onClick={handleFavoriteClick}
         >
           {isFromFavorites ? <FaHeartBroken /> : (isFavorite(nasaId) ? <FaHeart /> : <FaRegHeart />)}
-          <span className="button-text">
-            {isFromFavorites ? 'Remover dos Favoritos' : (isFavorite(nasaId) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos')}
-          </span>
         </button>
         <div className="image-view-details">
           <h2>{title}</h2>

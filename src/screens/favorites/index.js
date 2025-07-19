@@ -34,8 +34,8 @@ export default function Favorites() {
                 <img src={imageUrl} alt={title} onClick={() => openModal(item)} />
                 <div className="photo-details">
                   <p className="photo-title">{title}</p>
-                  <button className="remove-favorite-button" onClick={() => removeFavorite(nasaId)}>
-                    <FaHeartBroken /> Remover
+                  <button className="favorite-button" onClick={() => removeFavorite(nasaId)}>
+                    <FaHeartBroken />
                   </button>
                 </div>
               </div>
