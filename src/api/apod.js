@@ -16,8 +16,7 @@ export const getAPOD = async () => {
 
 export const searchAPOD = async (date) => {
   try {
-    const apiUrl = `${NASA_API_BASE_URL}/planetary/apod?api_key=${NASA_API_KEY}&date=${date}`;
-    console.log('APOD Search Request URL:', apiUrl);
+    const apiUrl = `${NASA_API_BASE_URL}/planetary/apod?api_key=${NASA_API_KEY}&date=${date}`;    
     const response = await axios.get(apiUrl);
     return response.data;
   } catch (error) {
