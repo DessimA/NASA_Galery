@@ -5,8 +5,7 @@ const NASA_API_BASE_URL = process.env.REACT_APP_NASA_API_BASE_URL || 'https://ap
 
 export const getAPOD = async () => {
   try {
-    const apiUrl = `${NASA_API_BASE_URL}/planetary/apod?api_key=${NASA_API_KEY}`;
-    console.log('APOD Request URL:', apiUrl);
+    const apiUrl = `${NASA_API_BASE_URL}/planetary/apod?api_key=${NASA_API_KEY}`;    
     const response = await axios.get(apiUrl);
     return response.data;
   } catch (error) {
