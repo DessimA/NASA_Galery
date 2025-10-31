@@ -89,7 +89,12 @@ export default function ImageSearch() {
           <option value="opportunity">Opportunity</option>
           <option value="spirit">Spirit</option>
         </select>
-        {/* Form inputs remain the same */}
+        <input
+          type="date"
+          value={earthDate}
+          onChange={(e) => setEarthDate(e.target.value)}
+        />
+        <button type="submit">Pesquisar</button>
       </form>
 
       {/* Manifest info remains the same */}
