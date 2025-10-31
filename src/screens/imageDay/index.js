@@ -44,8 +44,8 @@ export default function ImageDay() {
     } catch (err) {
       if (err.response && err.response.status === 429) {
         setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
-      } else if (err.response && err.response.data && err.response.data.msg && err.response.data.msg.includes("API rate limit exceeded")) {
-        setError("O limite de acesso gratuito à API da NASA para hoje foi atingido. Por favor, tente novamente amanhã.");
+      } else if (err.response && err.response.status === 404) {
+        setError(`Nenhuma imagem encontrada para a data selecionada. A última imagem disponível é de ${apodData.date}. Por favor, escolha uma data anterior.`);
       } else {
         setError("Falha ao buscar a imagem para a data especificada. Verifique o formato da data e tente novamente.");
       }
