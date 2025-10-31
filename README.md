@@ -39,7 +39,7 @@ A arquitetura da Galeria NASA foi pensada para ser modular, escalável e de fác
 ```mermaid
 graph TD
     A[**App.js**] --> B(**Navegação - SPA Customizada**)
-    B --> C{**Telas/Páginas**}
+    B --> C{**Telas-Páginas**}
     C --> D[**Home**]
     C --> E[**Imagem do Dia**]
     C --> F[**Pesquisa de Imagens**]
