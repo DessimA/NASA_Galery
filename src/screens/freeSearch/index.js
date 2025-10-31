@@ -54,13 +54,15 @@ export default function FreeSearch() {
       )}
 
       <div className="results-grid">
-        {results.map((item) => (
-          <div key={item.data[0].nasa_id} className="photo-card" onClick={() => setSelectedImage(item)}>
-            <img src={item.links[0].href} alt={item.data[0].title.replace(/image|photo|picture/gi, '').trim()} />
-            <div className="photo-details">
-              <p className="photo-title">{item.data[0].title}</p>
+        {results
+          .filter((item) => item.data && item.data.length > 0 && item.links && item.links.length > 0)
+          .map((item) => (
+            <div key={item.data[0].nasa_id} className="photo-card" onClick={() => setSelectedImage(item)}>
+              <img src={item.links[0].href} alt={(item.data[0].title || '').replace(/image|photo|picture/gi, '').trim()} />
+              <div className="photo-details">
+                <p className="photo-title">{item.data[0].title}</p>
+              </div>
             </div>
-          </div>
         ))}
       </div>
 
