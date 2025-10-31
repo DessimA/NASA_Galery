@@ -116,9 +116,9 @@ export default function ImageDay() {
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
             >
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                <option key={month} value={month}>
-                  {month < 10 ? `0${month}` : month}
+              {[ "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" ].map((monthName, index) => (
+                <option key={monthName} value={index + 1}>
+                  {monthName}
                 </option>
               ))}
             </select>
