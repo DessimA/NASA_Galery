@@ -84,12 +84,24 @@
     color: var(--secondary-text);
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     background-color: var(--secondary-bg);
     border: 1px solid var(--border-color);
     color: var(--primary-text);
     padding: var(--button-padding-y) var(--button-padding-x);
     border-radius: var(--button-border-radius);
+}
+
+.date-select-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.date-select-group select {
+    flex: 1;
+    min-width: 80px; /* Adjust as needed */
 }
 
 .submit-button {

@@ -12,6 +12,15 @@ export default function ImageDay() {
   const [error, setError] = useState(null);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
+  const today = new Date();
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
+  const [selectedDay, setSelectedDay] = useState(today.getDate());
+
+  const daysInMonth = (year, month) => {
+    return new Date(year, month, 0).getDate();
+  };
+
   useEffect(() => {
     const fetchAPOD = async () => {
       try {
@@ -32,6 +41,13 @@ export default function ImageDay() {
     };
     fetchAPOD();
   }, []);
+
+  useEffect(() => {
+    const year = selectedYear;
+    const month = selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth;
+    const day = selectedDay < 10 ? `0${selectedDay}` : selectedDay;
+    setDate(`${year}-${month}-${day}`);
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -81,12 +97,45 @@ export default function ImageDay() {
       <form onSubmit={handleSearch} className="search-form">
         <div className="form-group">
           <label htmlFor="date">Pesquisar por data:</label>
-          <input
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <div className="date-select-group">
+            <select
+              id="year"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            >
+              {Array.from({ length: new Date().getFullYear() - 1994 }, (_, i) => 1995 + i).map(
+                (year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                )
+              )}
+            </select>
+            <select
+              id="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                <option key={month} value={month}>
+                  {month < 10 ? `0${month}` : month}
+                </option>
+              ))}
+            </select>
+            <select
+              id="day"
+              value={selectedDay}
+              onChange={(e) => setSelectedDay(parseInt(e.target.value))}
+            >
+              {Array.from({ length: daysInMonth(selectedYear, selectedMonth) }, (_, i) => i + 1).map(
+                (day) => (
+                  <option key={day} value={day}>
+                    {day < 10 ? `0${day}` : day}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
         </div>
         <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? 'Buscando...' : 'Buscar'}
