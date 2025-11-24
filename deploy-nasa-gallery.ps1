@@ -1,354 +1,270 @@
 # ============================================================
-# Script Completo: Deploy NASA Gallery com VPC Customizada
-# Arquitetura: VPC + 4 Subnets + NAT Gateway + EC2
+# Script: Deploy NASA Gallery (Full Stack Automation)
+# Versão: 6.0 (Secure Mode - External Secrets)
 # ============================================================
 
 $ErrorActionPreference = "Stop"
+Clear-Host
 
 Write-Host @"
 ╔══════════════════════════════════════════════════════════╗
-║  🚀 Deploy NASA Gallery - Arquitetura Completa AWS      ║
-║  VPC Customizada + Subnets Públicas/Privadas + NAT      ║
+║  🚀 Deploy NASA Gallery - Secure Automation             ║
+║  Infra + App + Gestão Segura de Segredos                ║
+║  Status: Production-Ready                                ║
 ╚══════════════════════════════════════════════════════════╝
 "@ -ForegroundColor Cyan
 
 # ============================================================
-# PARTE 1: VERIFICAÇÕES INICIAIS
+# PARTE 0: CARREGAR SEGREDOS (NOVO!)
 # ============================================================
 
-Write-Host "`n[CHECK] Verificando AWS CLI..." -ForegroundColor Yellow
+Write-Host "`n[INIT] Verificando arquivo de segredos..." -ForegroundColor Yellow
+$secretsFile = "secrets.json"
+
+if (-not (Test-Path $secretsFile)) {
+    Write-Host "❌ ERRO CRÍTICO: Arquivo '$secretsFile' não encontrado!" -ForegroundColor Red
+    Write-Host "   Para segurança, a API Key não está mais no script." -ForegroundColor Gray
+    Write-Host "   1. Crie um arquivo chamado 'secrets.json'" -ForegroundColor Yellow
+    Write-Host "   2. Use o modelo abaixo:" -ForegroundColor Yellow
+    Write-Host @"
+   {
+       "NASA_API_KEY": "SUA_CHAVE_DA_NASA_AQUI",
+       "NASA_API_BASE_URL": "https://api.nasa.gov"
+   }
+"@ -ForegroundColor Gray
+    exit 1
+}
+
 try {
-    $identity = aws sts get-caller-identity --output json | ConvertFrom-Json
-    Write-Host "✅ AWS CLI configurado" -ForegroundColor Green
-    Write-Host "   Conta: $($identity.Account)" -ForegroundColor Gray
+    $secrets = Get-Content $secretsFile -Raw | ConvertFrom-Json
+    $NASA_KEY = $secrets.NASA_API_KEY
+    $NASA_URL = $secrets.NASA_API_BASE_URL
+    
+    if ([string]::IsNullOrWhiteSpace($NASA_KEY) -or $NASA_KEY -eq "SUA_CHAVE_AQUI") {
+        throw "Chave inválida"
+    }
+    Write-Host "✅ Segredos carregados com sucesso" -ForegroundColor Green
 } catch {
-    Write-Host "❌ AWS CLI não configurado!" -ForegroundColor Red
+    Write-Host "❌ Erro ao ler '$secretsFile'. Verifique o formato JSON." -ForegroundColor Red
     exit 1
 }
 
 # ============================================================
-# PARTE 2: CRIAR VPC
+# PARTE 1: VERIFICAÇÕES
 # ============================================================
 
-Write-Host "`n[1/20] Criando VPC customizada (10.0.0.0/16)..." -ForegroundColor Yellow
-aws ec2 create-vpc `
-  --cidr-block 10.0.0.0/16 `
-  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=NASA-Gallery-VPC}]' | Out-Null
+Write-Host "`n[CHECK 1/4] Validando credenciais..." -ForegroundColor Yellow
+try {
+    aws sts get-caller-identity --output json | Out-Null
+    Write-Host "✅ AWS CLI Autenticado" -ForegroundColor Green
+    Write-Host "   🔒 Conta: ************ (Oculto)" -ForegroundColor Gray
+} catch {
+    Write-Host "❌ Falha na autenticação AWS CLI" -ForegroundColor Red
+    exit 1
+}
 
-$VPC_ID = aws ec2 describe-vpcs `
-  --filters "Name=tag:Name,Values=NASA-Gallery-VPC" `
-  --query 'Vpcs[0].VpcId' `
-  --output text
+Write-Host "`n[CHECK 2/4] Verificando região..." -ForegroundColor Yellow
+$currentRegion = aws configure get region
+if ($currentRegion -ne "us-west-2") {
+    aws configure set region us-west-2
+    Write-Host "✅ Região ajustada para: us-west-2" -ForegroundColor Green
+} else {
+    Write-Host "✅ Região: us-west-2" -ForegroundColor Green
+}
 
-Write-Host "   ✅ VPC criada: $VPC_ID" -ForegroundColor Green
+Write-Host "`n[CHECK 3/4] Limpando chaves antigas..." -ForegroundColor Yellow
+if (Test-Path "nasa-gallery-key.pem") {
+    try {
+        $null = icacls "nasa-gallery-key.pem" /reset 2>$null
+        Remove-Item "nasa-gallery-key.pem" -Force -ErrorAction SilentlyContinue
+        Write-Host "✅ Chave antiga removida" -ForegroundColor Green
+    } catch {
+        Write-Host "⚠️  Aviso: Não foi possível remover a chave antiga." -ForegroundColor Yellow
+    }
+}
 
-# Habilitar DNS
+Write-Host "`n[CHECK 4/4] Preparando script de instalação (User Data)..." -ForegroundColor Yellow
+
+# AQUI A VARIÁVEL $NASA_KEY É INJETADA NO SCRIPT BASH
+$userDataContent = @"
+#!/bin/bash
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+echo "--- INICIANDO INSTALAÇÃO AUTOMATICA ---"
+
+# 1. Atualizar Sistema e Instalar Dependências
+dnf update -y
+dnf install -y git nginx ruby wget
+
+# 2. Instalar Node.js 18
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+dnf install -y nodejs
+
+# 3. Clonar Repositório
+cd /home/ec2-user
+git clone https://github.com/DessimA/NASA_Galery.git
+cd NASA_Galery
+
+# 4. Ajustar package.json
+sed -i 's|"homepage": "https://dessima.github.io/NASA_Galery",|"homepage": ".",|' package.json
+
+# 5. INJETAR VARIÁVEIS DE AMBIENTE (DO SECRETS.JSON)
+echo "Configurando variáveis de ambiente seguras..."
+echo "REACT_APP_NASA_API_KEY=$NASA_KEY" > .env
+echo "NASA_API_BASE_URL=$NASA_URL" >> .env
+
+# 6. Build e Deploy
+npm install --legacy-peer-deps
+npm run build
+cp -r build/* /usr/share/nginx/html/
+
+# 7. Permissões e Nginx
+chown -R nginx:nginx /usr/share/nginx/html
+chmod -R 755 /usr/share/nginx/html
+systemctl enable --now nginx
+
+echo "--- DEPLOY FINALIZADO ---"
+"@
+
+$userDataContent | Out-File -FilePath "user_data_script.sh" -Encoding ascii
+Write-Host "✅ Script de automação gerado (Chaves injetadas)" -ForegroundColor Green
+
+Start-Sleep -Seconds 2
+
+# ============================================================
+# PARTE 2: REDE (VPC & SUBNETS)
+# ============================================================
+
+Write-Host "`n[1/8] Construindo VPC e Gateway..." -ForegroundColor Yellow
+aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=NASA-Gallery-VPC}]' | Out-Null
+$VPC_ID = aws ec2 describe-vpcs --filters "Name=tag:Name,Values=NASA-Gallery-VPC" --query 'Vpcs | sort_by(@, &State) | [-1].VpcId' --output text
 aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-support
 aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames
 
-# ============================================================
-# PARTE 3: CRIAR INTERNET GATEWAY
-# ============================================================
-
-Write-Host "`n[2/20] Criando Internet Gateway..." -ForegroundColor Yellow
-aws ec2 create-internet-gateway `
-  --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=NASA-Gallery-IGW}]' | Out-Null
-
-$IGW_ID = aws ec2 describe-internet-gateways `
-  --filters "Name=tag:Name,Values=NASA-Gallery-IGW" `
-  --query 'InternetGateways[0].InternetGatewayId' `
-  --output text
-
+aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=NASA-Gallery-IGW}]' | Out-Null
+$IGW_ID = aws ec2 describe-internet-gateways --filters "Name=tag:Name,Values=NASA-Gallery-IGW" --query 'InternetGateways | sort_by(@, &Tags[0].Value) | [-1].InternetGatewayId' --output text
 aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW_ID
-Write-Host "   ✅ Internet Gateway: $IGW_ID" -ForegroundColor Green
+Write-Host "   ✅ VPC ID: $VPC_ID" -ForegroundColor Green
+
+Write-Host "`n[2/8] Provisionando Subnets (Multi-AZ)..." -ForegroundColor Yellow
+# Public 1
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.0.0/24 --availability-zone us-west-2a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-Subnet-1}]' | Out-Null
+$PUB_1 = aws ec2 describe-subnets --filters "Name=tag:Name,Values=Public-Subnet-1" "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text
+
+# Private 1
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --availability-zone us-west-2a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Private-Subnet-1}]' | Out-Null
+$PRIV_1 = aws ec2 describe-subnets --filters "Name=tag:Name,Values=Private-Subnet-1" "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text
+
+# Public 2
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.2.0/24 --availability-zone us-west-2b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-Subnet-2}]' | Out-Null
+$PUB_2 = aws ec2 describe-subnets --filters "Name=tag:Name,Values=Public-Subnet-2" "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text
+
+# Private 2
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.3.0/24 --availability-zone us-west-2b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Private-Subnet-2}]' | Out-Null
+$PRIV_2 = aws ec2 describe-subnets --filters "Name=tag:Name,Values=Private-Subnet-2" "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[0].SubnetId' --output text
+Write-Host "   ✅ 4 Subnets criadas com sucesso" -ForegroundColor Green
 
 # ============================================================
-# PARTE 4: CRIAR 4 SUBNETS
+# PARTE 3: CONECTIVIDADE (NAT & ROTAS)
 # ============================================================
 
-Write-Host "`n[3/20] Criando Public Subnet 1 (10.0.0.0/24, us-west-2a)..." -ForegroundColor Yellow
-aws ec2 create-subnet `
-  --vpc-id $VPC_ID `
-  --cidr-block 10.0.0.0/24 `
-  --availability-zone us-west-2a `
-  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-Subnet-1}]' | Out-Null
+Write-Host "`n[3/8] Configurando NAT Gateway..." -ForegroundColor Yellow
+aws ec2 allocate-address --domain vpc --tag-specifications 'ResourceType=elastic-ip,Tags=[{Key=Name,Value=NAT-Gateway-EIP}]' | Out-Null
+$EIP_ID = aws ec2 describe-addresses --filters "Name=tag:Name,Values=NAT-Gateway-EIP" --query 'Addresses | sort_by(@, &AllocationId) | [-1].AllocationId' --output text
 
-$PUBLIC_SUBNET_1 = aws ec2 describe-subnets `
-  --filters "Name=tag:Name,Values=Public-Subnet-1" `
-  --query 'Subnets[0].SubnetId' `
-  --output text
-Write-Host "   ✅ Public Subnet 1: $PUBLIC_SUBNET_1" -ForegroundColor Green
+$EXISTING_NAT = aws ec2 describe-nat-gateways --filter "Name=tag:Name,Values=NASA-Gallery-NAT" "Name=state,Values=pending,available" --query 'NatGateways[0].NatGatewayId' --output text 2>$null
 
-Write-Host "`n[4/20] Criando Private Subnet 1 (10.0.1.0/24, us-west-2a)..." -ForegroundColor Yellow
-aws ec2 create-subnet `
-  --vpc-id $VPC_ID `
-  --cidr-block 10.0.1.0/24 `
-  --availability-zone us-west-2a `
-  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Private-Subnet-1}]' | Out-Null
-
-$PRIVATE_SUBNET_1 = aws ec2 describe-subnets `
-  --filters "Name=tag:Name,Values=Private-Subnet-1" `
-  --query 'Subnets[0].SubnetId' `
-  --output text
-Write-Host "   ✅ Private Subnet 1: $PRIVATE_SUBNET_1" -ForegroundColor Green
-
-Write-Host "`n[5/20] Criando Public Subnet 2 (10.0.2.0/24, us-west-2b) - Web Server..." -ForegroundColor Yellow
-aws ec2 create-subnet `
-  --vpc-id $VPC_ID `
-  --cidr-block 10.0.2.0/24 `
-  --availability-zone us-west-2b `
-  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Public-Subnet-2}]' | Out-Null
-
-$PUBLIC_SUBNET_2 = aws ec2 describe-subnets `
-  --filters "Name=tag:Name,Values=Public-Subnet-2" `
-  --query 'Subnets[0].SubnetId' `
-  --output text
-Write-Host "   ✅ Public Subnet 2 (Web Server): $PUBLIC_SUBNET_2" -ForegroundColor Green
-
-Write-Host "`n[6/20] Criando Private Subnet 2 (10.0.3.0/24, us-west-2b)..." -ForegroundColor Yellow
-aws ec2 create-subnet `
-  --vpc-id $VPC_ID `
-  --cidr-block 10.0.3.0/24 `
-  --availability-zone us-west-2b `
-  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=Private-Subnet-2}]' | Out-Null
-
-$PRIVATE_SUBNET_2 = aws ec2 describe-subnets `
-  --filters "Name=tag:Name,Values=Private-Subnet-2" `
-  --query 'Subnets[0].SubnetId' `
-  --output text
-Write-Host "   ✅ Private Subnet 2: $PRIVATE_SUBNET_2" -ForegroundColor Green
-
-# ============================================================
-# PARTE 5: CRIAR NAT GATEWAY
-# ============================================================
-
-Write-Host "`n[7/20] Criando Elastic IP para NAT Gateway..." -ForegroundColor Yellow
-aws ec2 allocate-address `
-  --domain vpc `
-  --tag-specifications 'ResourceType=elastic-ip,Tags=[{Key=Name,Value=NAT-Gateway-EIP}]' | Out-Null
-
-$EIP_ALLOC_ID = aws ec2 describe-addresses `
-  --filters "Name=tag:Name,Values=NAT-Gateway-EIP" `
-  --query 'Addresses[0].AllocationId' `
-  --output text
-Write-Host "   ✅ Elastic IP: $EIP_ALLOC_ID" -ForegroundColor Green
-
-Write-Host "`n[8/20] Criando NAT Gateway (aguarde 2-3 minutos)..." -ForegroundColor Yellow
-aws ec2 create-nat-gateway `
-  --subnet-id $PUBLIC_SUBNET_1 `
-  --allocation-id $EIP_ALLOC_ID `
-  --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=NASA-Gallery-NAT}]' | Out-Null
-
-$NAT_GW_ID = aws ec2 describe-nat-gateways `
-  --filter "Name=tag:Name,Values=NASA-Gallery-NAT" `
-  --query 'NatGateways[0].NatGatewayId' `
-  --output text
-
-Write-Host "   ⏳ Aguardando NAT Gateway disponível..." -ForegroundColor Cyan
-aws ec2 wait nat-gateway-available --nat-gateway-ids $NAT_GW_ID
-Write-Host "   ✅ NAT Gateway: $NAT_GW_ID" -ForegroundColor Green
-
-# ============================================================
-# PARTE 6: CRIAR ROUTE TABLES
-# ============================================================
-
-Write-Host "`n[9/20] Criando Public Route Table..." -ForegroundColor Yellow
-aws ec2 create-route-table `
-  --vpc-id $VPC_ID `
-  --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=Public-Route-Table}]' | Out-Null
-
-$PUBLIC_RT = aws ec2 describe-route-tables `
-  --filters "Name=tag:Name,Values=Public-Route-Table" `
-  --query 'RouteTables[0].RouteTableId' `
-  --output text
-
-aws ec2 create-route --route-table-id $PUBLIC_RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID | Out-Null
-Write-Host "   ✅ Public Route Table: $PUBLIC_RT" -ForegroundColor Green
-
-Write-Host "`n[10/20] Associando subnets públicas..." -ForegroundColor Yellow
-aws ec2 associate-route-table --route-table-id $PUBLIC_RT --subnet-id $PUBLIC_SUBNET_1 | Out-Null
-aws ec2 associate-route-table --route-table-id $PUBLIC_RT --subnet-id $PUBLIC_SUBNET_2 | Out-Null
-Write-Host "   ✅ Subnets públicas associadas" -ForegroundColor Green
-
-Write-Host "`n[11/20] Criando Private Route Table..." -ForegroundColor Yellow
-aws ec2 create-route-table `
-  --vpc-id $VPC_ID `
-  --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=Private-Route-Table}]' | Out-Null
-
-$PRIVATE_RT = aws ec2 describe-route-tables `
-  --filters "Name=tag:Name,Values=Private-Route-Table" `
-  --query 'RouteTables[0].RouteTableId' `
-  --output text
-
-aws ec2 create-route --route-table-id $PRIVATE_RT --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT_GW_ID | Out-Null
-Write-Host "   ✅ Private Route Table: $PRIVATE_RT" -ForegroundColor Green
-
-Write-Host "`n[12/20] Associando subnets privadas..." -ForegroundColor Yellow
-aws ec2 associate-route-table --route-table-id $PRIVATE_RT --subnet-id $PRIVATE_SUBNET_1 | Out-Null
-aws ec2 associate-route-table --route-table-id $PRIVATE_RT --subnet-id $PRIVATE_SUBNET_2 | Out-Null
-Write-Host "   ✅ Subnets privadas associadas" -ForegroundColor Green
-
-# ============================================================
-# PARTE 7: CRIAR KEY PAIR
-# ============================================================
-
-Write-Host "`n[13/20] Criando Key Pair..." -ForegroundColor Yellow
-$keyExists = aws ec2 describe-key-pairs --key-names nasa-gallery-key 2>$null
-
-if ($keyExists) {
-    Write-Host "   ⚠️  Key Pair já existe" -ForegroundColor Yellow
-    if (-not (Test-Path "nasa-gallery-key.pem")) {
-        Write-Host "   ❌ Arquivo .pem não encontrado!" -ForegroundColor Red
-        exit 1
-    }
+if ($EXISTING_NAT -and $EXISTING_NAT -ne "None") {
+    $NAT_ID = $EXISTING_NAT
 } else {
-    aws ec2 create-key-pair --key-name nasa-gallery-key --query 'KeyMaterial' --output text | Out-File -Encoding ascii -FilePath nasa-gallery-key.pem
-    icacls nasa-gallery-key.pem /reset | Out-Null
-    icacls nasa-gallery-key.pem /inheritance:r | Out-Null
-    icacls nasa-gallery-key.pem /grant:r "$env:USERNAME`:(R)" | Out-Null
-    Write-Host "   ✅ Key Pair criada" -ForegroundColor Green
+    aws ec2 create-nat-gateway --subnet-id $PUB_1 --allocation-id $EIP_ID --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=NASA-Gallery-NAT}]' | Out-Null
+    $NAT_ID = aws ec2 describe-nat-gateways --filter "Name=tag:Name,Values=NASA-Gallery-NAT" --query 'NatGateways | sort_by(@, &CreateTime) | [-1].NatGatewayId' --output text
 }
 
+Write-Host "   ⏳ Aguardando provisionamento do NAT (pode levar alguns minutos)..." -ForegroundColor Cyan
+$timeout = 900; $elapsed = 0; $interval = 15
+while ($elapsed -lt $timeout) {
+    $state = aws ec2 describe-nat-gateways --nat-gateway-ids $NAT_ID --query 'NatGateways[0].State' --output text
+    if ($state -eq "available") { Write-Host "`n   ✅ NAT Gateway Ativo" -ForegroundColor Green; break }
+    if ($state -eq "failed") { Write-Host "`n   ❌ Falha no NAT Gateway" -ForegroundColor Red; exit 1 }
+    Start-Sleep -Seconds $interval; $elapsed += $interval
+    Write-Host -NoNewline "·"
+}
+
+Write-Host "`n[4/8] Configurando Tabelas de Roteamento..." -ForegroundColor Yellow
+# Public RT
+aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=Public-Route-Table}]' | Out-Null
+$PUB_RT = aws ec2 describe-route-tables --filters "Name=tag:Name,Values=Public-Route-Table" "Name=vpc-id,Values=$VPC_ID" --query 'RouteTables[0].RouteTableId' --output text
+aws ec2 create-route --route-table-id $PUB_RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID | Out-Null
+aws ec2 associate-route-table --route-table-id $PUB_RT --subnet-id $PUB_1 | Out-Null
+aws ec2 associate-route-table --route-table-id $PUB_RT --subnet-id $PUB_2 | Out-Null
+
+# Private RT
+aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=Private-Route-Table}]' | Out-Null
+$PRIV_RT = aws ec2 describe-route-tables --filters "Name=tag:Name,Values=Private-Route-Table" "Name=vpc-id,Values=$VPC_ID" --query 'RouteTables[0].RouteTableId' --output text
+aws ec2 create-route --route-table-id $PRIV_RT --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT_ID | Out-Null
+aws ec2 associate-route-table --route-table-id $PRIV_RT --subnet-id $PRIV_1 | Out-Null
+aws ec2 associate-route-table --route-table-id $PRIV_RT --subnet-id $PRIV_2 | Out-Null
+Write-Host "   ✅ Rotas configuradas (Internet & NAT)" -ForegroundColor Green
+
 # ============================================================
-# PARTE 8: CRIAR SECURITY GROUP
+# PARTE 4: SEGURANÇA & COMPUTAÇÃO
 # ============================================================
 
-Write-Host "`n[14/20] Criando Security Group..." -ForegroundColor Yellow
-aws ec2 create-security-group `
-  --group-name nasa-gallery-sg `
-  --description "Security group for NASA Gallery" `
-  --vpc-id $VPC_ID | Out-Null
+Write-Host "`n[5/8] Gerando Key Pair..." -ForegroundColor Yellow
+aws ec2 delete-key-pair --key-name nasa-gallery-key 2>$null
+$keyMaterial = aws ec2 create-key-pair --key-name nasa-gallery-key --query 'KeyMaterial' --output text
+$keyMaterial | Out-File -Encoding ascii -FilePath nasa-gallery-key.pem
 
-$SG_ID = aws ec2 describe-security-groups `
-  --filters "Name=group-name,Values=nasa-gallery-sg" `
-  --query 'SecurityGroups[0].GroupId' `
-  --output text
+icacls nasa-gallery-key.pem /reset | Out-Null
+icacls nasa-gallery-key.pem /inheritance:r | Out-Null
+icacls nasa-gallery-key.pem /grant:r "$env:USERNAME`:(R)" | Out-Null
+Write-Host "   ✅ Key Pair criada e protegida" -ForegroundColor Green
 
-aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 2>$null
-aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0 2>$null
-Write-Host "   ✅ Security Group: $SG_ID" -ForegroundColor Green
+Write-Host "`n[6/8] Configurando Security Group..." -ForegroundColor Yellow
+aws ec2 create-security-group --group-name nasa-gallery-sg --description "NASA Gallery SG" --vpc-id $VPC_ID | Out-Null
+$SG_ID = aws ec2 describe-security-groups --filters "Name=group-name,Values=nasa-gallery-sg" "Name=vpc-id,Values=$VPC_ID" --query 'SecurityGroups[0].GroupId' --output text
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 | Out-Null
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0 | Out-Null
+Write-Host "   ✅ Firewall configurado (Portas 22, 80)" -ForegroundColor Green
 
-# ============================================================
-# PARTE 9: CRIAR EC2
-# ============================================================
+Write-Host "`n[7/8] Iniciando Instância EC2 com User Data..." -ForegroundColor Yellow
+$AMI_ID = aws ec2 describe-images --owners amazon --filters "Name=name,Values=al2023-ami-2023*" "Name=architecture,Values=x86_64" --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text
 
-Write-Host "`n[15/20] Obtendo AMI..." -ForegroundColor Yellow
-$AMI_ID = aws ec2 describe-images `
-  --owners amazon `
-  --filters "Name=name,Values=al2023-ami-2023*" "Name=architecture,Values=x86_64" `
-  --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' `
-  --output text
-Write-Host "   ✅ AMI: $AMI_ID" -ForegroundColor Green
-
-Write-Host "`n[16/20] Criando instância EC2 na Public Subnet 2..." -ForegroundColor Yellow
 aws ec2 run-instances `
   --image-id $AMI_ID `
   --instance-type t3.micro `
   --key-name nasa-gallery-key `
   --security-group-ids $SG_ID `
-  --subnet-id $PUBLIC_SUBNET_2 `
+  --subnet-id $PUB_2 `
   --associate-public-ip-address `
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NASA-Gallery-Web-Server}]' | Out-Null
+  --user-data file://user_data_script.sh `
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NASA-Gallery-Web}]' | Out-Null
 
-Start-Sleep -Seconds 3
+Start-Sleep -Seconds 5
+$INST_ID = aws ec2 describe-instances --filters "Name=tag:Name,Values=NASA-Gallery-Web" "Name=instance-state-name,Values=pending,running" --query 'Reservations | sort_by(@, &Instances[0].LaunchTime) | [-1].Instances[0].InstanceId' --output text
+Write-Host "   ✅ Instância lançada: $INST_ID" -ForegroundColor Green
 
-$INSTANCE_ID = aws ec2 describe-instances `
-  --filters "Name=tag:Name,Values=NASA-Gallery-Web-Server" "Name=instance-state-name,Values=pending,running" `
-  --query 'Reservations[0].Instances[0].InstanceId' `
-  --output text
+Remove-Item "user_data_script.sh" -Force -ErrorAction SilentlyContinue
 
-Write-Host "   ✅ Instância: $INSTANCE_ID" -ForegroundColor Green
+Write-Host "`n[8/8] Finalizando e obtendo IP..." -ForegroundColor Yellow
+aws ec2 wait instance-running --instance-ids $INST_ID
+$PUB_IP = aws ec2 describe-instances --instance-ids $INST_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text
 
-Write-Host "`n[17/20] Aguardando instância iniciar..." -ForegroundColor Yellow
-aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-Write-Host "   ✅ Instância rodando" -ForegroundColor Green
-
-Write-Host "`n[18/20] Aguardando health checks (2-3 minutos)..." -ForegroundColor Yellow
-aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID
-Write-Host "   ✅ Health checks OK" -ForegroundColor Green
-
-Write-Host "`n[19/20] Obtendo IP público..." -ForegroundColor Yellow
-$PUBLIC_IP = aws ec2 describe-instances `
-  --instance-ids $INSTANCE_ID `
-  --query 'Reservations[0].Instances[0].PublicIpAddress' `
-  --output text
-Write-Host "   ✅ IP Público: $PUBLIC_IP" -ForegroundColor Green
-
-# ============================================================
-# RESUMO FINAL
-# ============================================================
+$resources = "VPC_ID=$VPC_ID`nIGW_ID=$IGW_ID`nNAT_GW_ID=$NAT_ID`nPUBLIC_SUBNET_1=$PUB_1`nPUBLIC_SUBNET_2=$PUB_2`nPRIVATE_SUBNET_1=$PRIV_1`nPRIVATE_SUBNET_2=$PRIV_2`nPUBLIC_RT=$PUB_RT`nPRIVATE_RT=$PRIV_RT`nSG_ID=$SG_ID`nINSTANCE_ID=$INST_ID`nPUBLIC_IP=$PUB_IP`nEIP_ALLOC_ID=$EIP_ID"
+$resources | Out-File -FilePath aws-resources.txt -Encoding UTF8
 
 Write-Host @"
 
 ╔══════════════════════════════════════════════════════════╗
-║          ✅ INFRAESTRUTURA CRIADA COM SUCESSO!          ║
+║               ✅ DEPLOY COMPLETO COM SUCESSO            ║
 ╚══════════════════════════════════════════════════════════╝
 
-📋 RESUMO DA ARQUITETURA:
+📊 Resumo:
+   • Infraestrutura: Criada
+   • Segredos:       Injetados via secrets.json (Seguro)
+   • Aplicação:      Instalando... (Aguarde 3-5 min)
 
-🏢 VPC: $VPC_ID (10.0.0.0/16)
+🌐 URL: http://$PUB_IP
 
-📍 Availability Zone A (us-west-2a):
-   📡 Public Subnet 1:  $PUBLIC_SUBNET_1 (10.0.0.0/24)
-   🔒 Private Subnet 1: $PRIVATE_SUBNET_1 (10.0.1.0/24)
-   🔄 NAT Gateway:      $NAT_GW_ID
-
-📍 Availability Zone B (us-west-2b):
-   📡 Public Subnet 2:  $PUBLIC_SUBNET_2 (10.0.2.0/24) ⭐ WEB SERVER
-   🔒 Private Subnet 2: $PRIVATE_SUBNET_2 (10.0.3.0/24)
-
-🗺️ Route Tables:
-   Public RT:  $PUBLIC_RT (→ Internet Gateway)
-   Private RT: $PRIVATE_RT (→ NAT Gateway)
-
-🖥️ EC2 Instance:
-   Instance ID: $INSTANCE_ID
-   IP Público:  $PUBLIC_IP
-
-🔌 PRÓXIMOS PASSOS:
-
-1. Conectar via SSH:
-   ssh -i nasa-gallery-key.pem ec2-user@$PUBLIC_IP
-
-2. Instalar software:
-   sudo yum update -y
-   curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
-   sudo yum install -y nodejs git
-
-3. Clonar projeto:
-   git clone https://github.com/DessimA/NASA_Galery.git
-   cd NASA_Galery
-
-4. ⚠️ CRÍTICO - Editar package.json:
-   nano package.json
-   # Remover ou alterar a linha "homepage"
-
-5. Build e deploy:
-   npm install --legacy-peer-deps
-   npm run build
-   sudo yum install -y nginx
-   sudo cp -r build/* /usr/share/nginx/html/
-   sudo systemctl start nginx
-
-6. Acessar: http://$PUBLIC_IP
-
-📝 SALVAR VARIÁVEIS:
-   Execute este comando para salvar todas as IDs:
-
-   echo "VPC_ID=$VPC_ID" > aws-resources.txt
-   echo "IGW_ID=$IGW_ID" >> aws-resources.txt
-   echo "NAT_GW_ID=$NAT_GW_ID" >> aws-resources.txt
-   echo "PUBLIC_SUBNET_1=$PUBLIC_SUBNET_1" >> aws-resources.txt
-   echo "PUBLIC_SUBNET_2=$PUBLIC_SUBNET_2" >> aws-resources.txt
-   echo "PRIVATE_SUBNET_1=$PRIVATE_SUBNET_1" >> aws-resources.txt
-   echo "PRIVATE_SUBNET_2=$PRIVATE_SUBNET_2" >> aws-resources.txt
-   echo "PUBLIC_RT=$PUBLIC_RT" >> aws-resources.txt
-   echo "PRIVATE_RT=$PRIVATE_RT" >> aws-resources.txt
-   echo "SG_ID=$SG_ID" >> aws-resources.txt
-   echo "INSTANCE_ID=$INSTANCE_ID" >> aws-resources.txt
-   echo "PUBLIC_IP=$PUBLIC_IP" >> aws-resources.txt
-   echo "EIP_ALLOC_ID=$EIP_ALLOC_ID" >> aws-resources.txt
-
-"@ -ForegroundColor Green
-
-Write-Host "`n[20/20] ✅ Script concluído!" -ForegroundColor Green
+"@ -ForegroundColor Cyan
