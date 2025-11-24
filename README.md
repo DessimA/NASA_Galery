@@ -163,7 +163,9 @@ NASA_Galery/
 ├── package.json            # Metadados do projeto e dependências
 ├── package-lock.json       # Bloqueio de versões de dependências
 ├── README.md               # Este arquivo!
-└── ... (outros arquivos de configuração e build)
+├── deploy-nasa-gallery.ps1 # Script de automação AWS
+├── cleanup-nasa-gallery.ps1# Script de limpeza AWS
+└── deploy-nasa-gallery.md  # Documentação de Deploy AWS
 ```
 
 ## 🚀 Configuração e Instalação: Comece Sua Jornada!
@@ -221,22 +223,18 @@ Para mais informações sobre implantação, consulte a seção sobre [implanta�
 Se você precisar de controle total sobre a configuração de build (webpack, Babel, ESLint, etc.), este comando removerá a dependência única do `react-scripts` do seu projeto. Ele copiará todos os arquivos de configuração e dependências transitivas diretamente para o seu projeto. A partir daí, você terá controle total para personalizar a configuração.
 Você não é obrigado(a) a usar `eject`. Para a maioria dos projetos, a configuração padrão do Create React App é mais do que suficiente.
 
-## 🤝 Como Contribuir: Junte-se à Missão!
+## ☁️ Deploy Automatizado na AWS (IaC)
 
-Adoramos contribuições! Se você tem ideias para novas funcionalidades, encontrou um bug ou quer melhorar o código, sinta-se à vontade para:
+Quer levar este projeto para a nuvem? Incluímos scripts de automação em **PowerShell** que realizam o provisionamento completo da infraestrutura na AWS (EC2, VPC, Networking) e a instalação automática da aplicação.
 
-1.  Fazer um fork do repositório.
-2.  Criar uma nova branch (`git checkout -b feature/sua-feature`).
-3.  Fazer suas alterações e testá-las.
-4.  Fazer commit das suas alterações (`git commit -m 'feat: Adiciona nova funcionalidade X'`).
-5.  Fazer push para a branch (`git push origin feature/sua-feature`).
-6.  Abrir um Pull Request.
+### 📄 Documentação de Deploy
+Para um guia passo a passo detalhado sobre como configurar suas credenciais, executar o script de criação e, posteriormente, o script de limpeza, consulte o arquivo anexo:
 
-Por favor, certifique-se de que seu código siga as convenções existentes e que todos os testes passem.
+👉 **[Guia de Deploy na AWS (deploy-nasa-gallery.md)](./deploy-nasa-gallery.md)**
 
-## 📄 Licença
-
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+### 🤖 O que os scripts fazem?
+*   **`.\deploy-nasa-gallery.ps1`**: Cria todo o ambiente (VPC, Subnets, NAT Gateway, EC2), instala dependências (Node, Nginx) e coloca o site no ar.
+*   **`.\cleanup-nasa-gallery.ps1`**: Destrói todos os recursos criados para garantir custo zero após os testes.
 
 ## 📚 Saiba Mais: Aprofunde Seus Conhecimentos
 
